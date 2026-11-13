@@ -1,0 +1,34 @@
+package com.nagarro.training.dao;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.nagarro.training.model.User;
+
+@Repository
+public class LoginDao {
+	@RequestMapping("/user")
+	public boolean checkLogin(String uname, String pass) {
+		SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(User.class)
+				.buildSessionFactory();
+		Session session = factory.openSession();
+		Query query;
+		query = session.createQuery("from User where username=:uname AND  password=:pass");
+
+		query.setParameter("uname", uname);
+		query.setParameter("pass", pass);
+		
+		
+		User user=(User) query.uniqueResult();
+		
+		if(user!=null) {
+			return true;
+		}
+
+		return false;
+	}
+}
